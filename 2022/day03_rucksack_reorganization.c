@@ -16,6 +16,7 @@ void verify_args(int argc, char* argv[]);
 void usage(char* prog_name);
 char find_matching_char_in_halves(char* line);
 int get_priority_value(char ch);
+char find_matching_char_in_set(char* line1, char* line2, char* line3);
 
 int main (int argc, char* argv[])
 {
@@ -29,21 +30,22 @@ int main (int argc, char* argv[])
         exit(1);
     }
 
-    char line[64];
+    char line1[64];
+    char line2[64];
+    char line3[64];
     char comm_ch;
     int sum = 0;
-    while (fgets(line, 64, file_p) != NULL)
+    while (fgets(line1, 64, file_p) != NULL)
     {
-        if (line[0] == '\n') // skip new lines
+        if (line1[0] == '\n') // skip new lines
             continue;
 
-        // one rucksack here
-        fputs(line, stdout);
+        fgets(line2, 64, file_p);
+        fgets(line3, 64, file_p);
 
-        // split the string in half
-        comm_ch = find_matching_char_in_halves(line);
-        fprintf(stdout, "comm_ch is %c\n", comm_ch);
-        fprintf(stdout, "value is %d\n", get_priority_value(comm_ch));
+        // one rucksack here
+        //comm_ch = find_matching_char_in_halves(line);
+        comm_ch = find_matching_char_in_set(line1, line2, line3);
 
         // assign priority value to char
         sum += get_priority_value(comm_ch);
@@ -52,6 +54,23 @@ int main (int argc, char* argv[])
     fclose(file_p);
 
     fprintf(stdout, "Sum of priority values: %d\n", sum);
+
+    return 0;
+}
+
+char find_matching_char_in_set(char* line1, char* line2, char* line3)
+{
+    char ch;
+
+    for (int i = 0; i < strlen(line1); i++)
+    {
+        ch = line1[i];
+
+        if (strchr(line2, ch) != NULL && strchr(line3, ch) != NULL)
+        {
+            return ch;
+        }
+    }
 
     return 0;
 }
