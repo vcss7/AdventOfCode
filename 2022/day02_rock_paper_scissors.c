@@ -5,8 +5,8 @@
  *
  * Purpose: Solution to AdventOfCode Problem https://adventofcode.com/2022/day/2
  *
- * Input:   File with A B or C in first column representing opponents move and X
- *          Y or Z in second column representing our move. Each line is a game.
+ * Input:   File with A B or C in first column representing opponents shape and X
+ *          Y or Z in second column representing our shape. Each line is a game.
  *
  * Output:  Final score for all games.
  */
@@ -16,12 +16,127 @@
 
 void usage(char* prog_name);
 void verify_args(int argc, char* argv[]);
+int score_match(char opp_shape, char my_shape);
+void convert_to_rps(char *shape);
+int points_from_shape(char shape);
+int points_from_match(char opp_shape, char my_shape);
 
 int main(int argc, char* argv[])
 {
     verify_args(argc, argv);
 
+    FILE* file_p = NULL;
+
+    if ((file_p = fopen(argv[1], "r")) == NULL)
+    {
+        fprintf(stderr, "Could not open: %s\n", argv[1]);
+        exit(1);
+    }
+
+    int total_score = 0;
+    char line[4];
+    while (fgets(line, 4, file_p) != NULL)
+    {
+        // skip end of line new line characters
+        if (line[0] == '\n')
+        {
+            continue;
+        }
+
+        // line[0] is opp shape: A B or C
+        // line[2] is your shape: X Y or Z
+        total_score += score_match(line[0], line[2]);
+    }
+
+    fclose(file_p);
+
+    fprintf(stdout, "Total score: %d\n", total_score);
+
     return 0;
+}
+
+int score_match(char opp_shape, char my_shape)
+{
+    int score = 0;
+
+    convert_to_rps(&opp_shape);
+    convert_to_rps(&my_shape);
+
+    fprintf(stdout, "Game ===\n");
+    fprintf(stdout, "Opp shape: %c\n", opp_shape);
+    fprintf(stdout, "My shape:  %c\n", my_shape);
+
+    score += points_from_shape(my_shape);
+    score += points_from_match(opp_shape, my_shape);
+
+    fprintf(stdout, "Score: %d\n\n", score);
+
+    return score;
+}
+
+int points_from_match(char opp_shape, char my_shape)
+{
+    switch(opp_shape)
+    {
+        case 'R':
+            fprintf(stdout, "Scoring for opp played: R\n");
+            switch(my_shape)
+            {
+                case 'R' : return 3;
+                case 'P' : return 6;
+            }
+            break;
+        case 'P':
+            fprintf(stdout, "Scoring for opp played: P\n");
+            switch(my_shape)
+            {
+                case 'P' : return 3;
+                case 'S' : return 6;
+            }
+            break;
+        case 'S':
+            fprintf(stdout, "Scoring for opp played: S\n");
+            switch(my_shape)
+            {
+                case 'S' : return 3;
+                case 'R' : return 6;
+            }
+            break;
+    }
+
+    return 0;
+}
+
+int points_from_shape(char shape)
+{
+    switch(shape)
+    {
+        case 'R' : return 1;
+        case 'P' : return 2;
+        case 'S' : return 3;
+    }
+
+    return 0;
+}
+
+void convert_to_rps(char* shape)
+{
+    // convert either A B C system or X Y Z system to R P S system
+    switch(*shape)
+    {
+        case 'A' :
+        case 'X' :
+              *shape = 'R';
+              break;
+        case 'B' :
+        case 'Y' :
+              *shape = 'P';
+              break;
+        case 'C' :
+        case 'Z' :
+              *shape = 'S';
+              break;
+    }
 }
 
 void verify_args(int argc, char* argv[])
@@ -38,7 +153,7 @@ void usage(char* prog_name)
     fprintf(stderr, "usage is %s <input file>\n", prog_name);
     fprintf(stderr, "\tinput file is file with predicted games\n");
     fprintf(stderr, "\teach game is delimited by new lines\n");
-    fprintf(stderr, "\teach line contains A B or C in files column\n"};
+    fprintf(stderr, "\teach line contains A B or C in files column\n");
     fprintf(stderr, "\t                   X Y or Z in second column\n");
 }
 
