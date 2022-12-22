@@ -16,10 +16,13 @@
 
 void usage(char* prog_name);
 void verify_args(int argc, char* argv[]);
-int score_match(char opp_shape, char my_shape);
+int score_match_p1(char opp_shape, char my_shape);
+int score_match_p2(char opp_shape, char outcome);
 void convert_to_rps(char *shape);
 int points_from_shape(char shape);
-int points_from_match(char opp_shape, char my_shape);
+int points_from_match_p1(char opp_shape, char my_shape);
+int points_from_match_p2(char outcome);
+char pick_shape_from_outcome(char opp_shape, char outcome);
 
 int main(int argc, char* argv[])
 {
@@ -45,7 +48,9 @@ int main(int argc, char* argv[])
 
         // line[0] is opp shape: A B or C
         // line[2] is your shape: X Y or Z
-        total_score += score_match(line[0], line[2]);
+
+        //total_score += score_match_p1(line[0], line[2]);
+        total_score += score_match_p2(line[0], line[2]);
     }
 
     fclose(file_p);
@@ -55,10 +60,8 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int score_match(char opp_shape, char my_shape)
+int score_match_p1(char opp_shape, char my_shape)
 {
-    int score = 0;
-
     convert_to_rps(&opp_shape);
     convert_to_rps(&my_shape);
 
@@ -66,15 +69,76 @@ int score_match(char opp_shape, char my_shape)
     fprintf(stdout, "Opp shape: %c\n", opp_shape);
     fprintf(stdout, "My shape:  %c\n", my_shape);
 
+    int score = 0;
     score += points_from_shape(my_shape);
-    score += points_from_match(opp_shape, my_shape);
+    score += points_from_match_p1(opp_shape, my_shape);
 
     fprintf(stdout, "Score: %d\n\n", score);
 
     return score;
 }
 
-int points_from_match(char opp_shape, char my_shape)
+int score_match_p2(char opp_shape, char outcome)
+{
+    convert_to_rps(&opp_shape);
+    char my_shape = pick_shape_from_outcome(opp_shape, outcome);
+
+    fprintf(stdout, "Game ===\n");
+    fprintf(stdout, "Opp shape: %c\n", opp_shape);
+    fprintf(stdout, "My shape:  %c\n", my_shape);
+
+    int score = 0;
+    score += points_from_shape(my_shape);
+    score += points_from_match_p2(outcome);
+
+    fprintf(stdout, "Score: %d\n\n", score);
+
+    return score;
+}
+
+char pick_shape_from_outcome(char opp_shape, char outcome)
+{
+    switch(outcome)
+    {
+        case 'X' : // return loss
+            switch(opp_shape)
+            {
+                case 'R' : return 'S';
+                case 'P' : return 'R';
+                case 'S' : return 'P';
+            }
+        case 'Y' : // return draw
+            switch(opp_shape)
+            {
+                case 'R' : return 'R';
+                case 'P' : return 'P';
+                case 'S' : return 'S';
+            }
+        case 'Z' : // return win
+            switch(opp_shape)
+            {
+                case 'R' : return 'P';
+                case 'P' : return 'S';
+                case 'S' : return 'R';
+            }
+    }
+
+    return '0';
+}
+
+int points_from_match_p2(char outcome)
+{
+    switch(outcome)
+    {
+        case 'X' : return 0;
+        case 'Y' : return 3;
+        case 'Z' : return 6;
+    }
+
+    return 0;
+}
+
+int points_from_match_p1(char opp_shape, char my_shape)
 {
     switch(opp_shape)
     {
