@@ -2,93 +2,153 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct Coordinate
+typedef struct Coordinate
 {
     int x;
     int y;
-};
+} Coord;
 
-struct House
+typedef struct House
 {
-    int visited_count;
-    struct Coordinate coord;
-};
+    int visitCount;
+    Coord coord;
+} House;
 
-struct House find_house(struct House* houses, struct Coordinate house_coord);
+House* createHouse (int x, int y);
+House* findHouse (House** houses, size_t numHouses, int x, int y);
+void freeHouses (House** houses, size_t numHouses);
+void printHouse (House house);
+void updateLoc (Coord* coord, char direction);
 
 int main(void)
 {
     FILE* fptr;
-    char* input_file = "test_input1.txt";
+    char* input_file = "input.txt";
 
     fptr = fopen(input_file, "r");
 
     if(fptr == NULL)
     {
-        fprintf(stderr, "Could not open file: %s\n", input_file);
+        fprintf(stderr, "Could not open file: %s\r\n", input_file);
         exit(1);
     }
     else
     {
-        fprintf(stdout, "Opened %s successfully.\n", input_file);
+        fprintf(stdout, "Opened %s successfully.\r\n", input_file);
     }
 
-    struct House houses[10][12];
-    int row_length = sizeof(houses[0])/sizeof(houses[0][0]);
-    int end_i = row_length / 2;
-    int begin_i = end_i - row_length;
-    int col_length = sizeof(houses)/sizeof(houses[0]);
-    int end_j = col_length / 2;
-    int begin_j = end_j - col_length;
+    Coord currLoc = {0, 0}; 
 
-    for(int i = begin_i; i < end_i; i++)
+    int totalVisits = 1;
+    int uniqueVisits = 1;
+
+    House** houses;
+    size_t numHouses = 0;
+    houses = (House **) malloc(sizeof(House*));
+    houses[0] = createHouse (0, 0);
+    numHouses++;
+
+    char nextMove;
+    while ((nextMove = fgetc(fptr)) != EOF)
     {
-        for(int j = begin_j; j < end_j; j++)
+        totalVisits += 1;
+        
+        updateLoc(&currLoc, nextMove);
+        House* currHouse = findHouse(houses, numHouses, currLoc.x, currLoc.y);
+
+        if (currHouse == NULL)
         {
-            houses[i][j].visited_count = 0;
-            houses[i][j].coord.x = i;
-            houses[i][j].coord.y = j;
+            currHouse = createHouse (currLoc.x, currLoc.y);
+
+            House** temp = NULL;
+            temp = (House **) realloc(houses, (numHouses + 1) * sizeof (House*));
+            if (temp == NULL)
+            {
+                fprintf (stdout, "Error: Failed to reallocate memory\r\n");
+                freeHouses (houses, numHouses);
+                return 1;
+            }
+
+            houses = temp;
+            houses[numHouses] = currHouse;
+            numHouses++;
         }
+
+        uniqueVisits = currHouse->visitCount++;
     }
 
-    struct Coordinate curr_coord = {0, 0};
-    find_house(houses, curr_coord);
+    
+    fprintf(stdout, "Visited %zu houses\r\n", numHouses);
+    fprintf(stdout, "Made %d visits\r\n", totalVisits);
 
-    exit(0);
-
-    char direction;
-    do
-    {
-        direction = fgetc(fptr);
-        switch (direction)
-        {
-            case '^':
-                curr_coord.x++;
-                break;
-            case 'v':
-                curr_coord.x--;
-                break;
-            case '<':
-                curr_coord.y--;
-                break;
-            case '>':
-                curr_coord.y++;
-                break;
-        }
-        houses[curr_coord.x][curr_coord.y].visited_count++;
-
-        fprintf(stdout, "Visited house at: [%i, %i]\n", curr_coord.x, curr_coord.y);
-        fprintf(stdout, "Visited count: %i\n", houses[curr_coord.x][curr_coord.y]);
-    } while(direction != EOF);
-
-    fprintf(stdout, "Current X: %i\nCurrent Y: %i\n", curr_coord.x, curr_coord.y);
+    freeHouses (houses, numHouses);
 
     fclose(fptr);
     return 0;
 }
 
-struct House find_house(struct House* houses, struct Coordinate house_coord)
+House* createHouse (int x, int y)
 {
-    fprintf(stdout, "Successfully entered the \"find_house\" function.\n");
-    return houses[0][0];
+    House* newHouse = malloc (sizeof(House));
+
+    newHouse->coord.x = x;
+    newHouse->coord.y = y;
+    newHouse->visitCount = 0;
+
+    return newHouse;
 }
+
+House* findHouse (House** houses, size_t numHouses, int x, int y)
+{
+    for (size_t i = 0; i < numHouses; i++)
+    {
+        if (houses[i]->coord.x == x && houses[i]->coord.y == y)
+        {
+            return houses[i];
+        }
+    }
+
+    return NULL;
+}
+
+void freeHouses (House** houses, size_t numHouses)
+{
+    for (size_t i = 0; i < numHouses; i++)
+    {
+        free(houses[i]);
+    }
+
+    return;
+}
+
+void printHouse (House house)
+{
+    fprintf(stdout, "House location {%d, %d} visited %d time(s)\r\n",
+        house.coord.x, house.coord.y, house.visitCount);
+
+    return;
+}
+
+void updateLoc (Coord* coord, char direction)
+{
+    switch (direction)
+    {
+        case '^':
+            coord->y++;
+            break;
+        case 'v':
+            coord->y--;
+            break;
+        case '>':
+            coord->x++;
+            break;
+        case '<':
+            coord->x--;
+            break;
+        default:
+            break;
+    }
+
+    return;
+}
+
