@@ -1,70 +1,67 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-void part1(FILE *fptr);
-void part2(FILE *fptr);
+void part1 (FILE *fptr);
+void part2 (FILE *fptr);
 
-int main(void)
+int main (void)
 {
-    FILE* fptr;
-    char* file_name = "input";
+    FILE *fptr;
+    char *file_name = "input";
 
-    fptr = fopen(file_name, "r");
+    fptr = fopen (file_name, "r");
 
     // check for valid file pointer
-    if(fptr == NULL)
+    if (fptr == NULL)
     {
-        fprintf(stderr, "Could not open file: %s\r\n", file_name);
-        exit(1);
+        fprintf (stderr, "Could not open file: %s\r\n", file_name);
+        exit (1);
     }
 
-    part1(fptr);
+    part1 (fptr);
 
     rewind (fptr);
 
-    part2(fptr);
+    part2 (fptr);
 
-    fclose(fptr);
+    fclose (fptr);
     return 0;
 }
 
-void part1(FILE *fptr)
+void part1 (FILE *fptr)
 {
     // solution for part one here
     char ch;
 
-    while((ch = fgetc(fptr)) != EOF)
+    while ((ch = fgetc (fptr)) != EOF)
     {
-        if(ferror(fptr))
+        if (ferror (fptr))
         {
-            fprintf(stderr, "Error occured while reading file\r\n");
-            exit(1);
+            fprintf (stderr, "Error occured while reading file\r\n");
+            exit (1);
         }
 
-        fprintf(stdout, "%c", ch);
+        fprintf (stdout, "%c", ch);
     }
 
     return;
 }
 
-void part2(FILE *fptr)
+void part2 (FILE *fptr)
 {
     // solution for part two here
     char ch;
 
-    while((ch = fgetc(fptr)) != EOF)
+    while ((ch = fgetc (fptr)) != EOF)
     {
-        if(ferror(fptr))
+        if (ferror (fptr))
         {
-            fprintf(stderr, "Error occured while reading file\r\n");
-            exit(1);
+            fprintf (stderr, "Error occured while reading file\r\n");
+            exit (1);
         }
 
-        fprintf(stdout, "%c", ch);
+        fprintf (stdout, "%c", ch);
     }
 
     return;
 }
-
