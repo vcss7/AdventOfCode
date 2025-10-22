@@ -11,6 +11,10 @@ bool hasVowels (const char* string, const int numVowels);
 bool hasNaughtyWords (const char* string);
 bool hasCharPair (const char* string);
 
+// part 2 functions
+bool hasPairOfCharPairs (const char* string);
+bool hasCharSandwich (const char* string);
+
 const char naughtyStrings[4][3] = { "ab", "cd", "pq", "xy"};
 const char vowels[5] = {'a', 'e', 'i', 'o', 'u'};
 
@@ -68,9 +72,11 @@ void part1 (FILE *fptr)
 void part2 (FILE *fptr)
 {
     // solution for part two here
-    char ch;
+    const int LINE_LEN = 17;
+    char line[LINE_LEN];
 
-    while ((ch = fgetc (fptr)) != EOF)
+    int niceStringCount = 0;
+    while (fgets(line, sizeof (line), fptr))
     {
         if (ferror (fptr))
         {
@@ -78,8 +84,18 @@ void part2 (FILE *fptr)
             exit (1);
         }
 
-        // fprintf (stdout, "%c", ch);
+        if (line[0] == '\n')
+        {
+            continue;
+        }
+
+        if (hasPairOfCharPairs(line) && hasCharSandwich(line))
+        {
+            niceStringCount++;
+        }
     }
+
+    fprintf (stdout, "Part 2: There are %d nice strings\r\n", niceStringCount);
 
     return;
 }
@@ -130,6 +146,43 @@ bool hasCharPair (const char* string)
     for (int i = 1; i < len; i++)
     {
         if (string[i] == string[i - 1])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool hasPairOfCharPairs (const char* string)
+{
+    int len = strlen (string);
+    char charPair[3];
+    charPair[2] = '\0';
+
+    for (int i = 0; i < len - 1; i++)
+    {
+        char charPair[2];
+        charPair[0] = string[i];
+        charPair[1] = string[i + 1];
+        if (strstr (string + i + 2, charPair))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// char sandwich = (char1)(char2)(char1)
+bool hasCharSandwich (const char* string)
+{
+    int len = strlen (string);
+    char ch;
+    for (int i = 1; i < len - 1; i++)
+    {
+        ch = string[i - 1];
+        if (ch == string[i + 1])
         {
             return true;
         }
