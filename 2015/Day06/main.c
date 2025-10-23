@@ -1,7 +1,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 int lights[1000][1000];
+
 void part1 (FILE* fptr);
 void part2 (FILE* fptr);
 
@@ -119,5 +121,68 @@ void part1 (FILE* fptr)
 void part2 (FILE* fptr)
 {
     // solution for part two here
+    char line[64];
+    int len = sizeof(line);
+
+    while (fgets(line, len, fptr))
+    {
+        if (ferror (fptr))
+        {
+            fprintf (stderr, "Error occured while reading file\r\n");
+            exit (1);
+        }
+
+        // fprintf (stdout, "%s", line);
+
+        int x1, y1;
+        int x2, y2;
+        if (sscanf (line, "turn on %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        {
+            for (int x = x1; x <= x2; x++)
+            {
+                for (int y = y1; y <= y2; y++)
+                {
+                    lights[x][y] += 1;
+                }
+            }
+        }
+        else if (sscanf (line, "turn off %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        {
+            for (int x = x1; x <= x2; x++)
+            {
+                for (int y = y1; y <= y2; y++)
+                {
+                    lights[x][y] -= 1;
+                    if (lights[x][y] < 0)
+                    {
+                        lights[x][y] = 0;
+                    }
+                }
+            }
+        }
+        else if (sscanf (line, "toggle %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        {
+            for (int x = x1; x <= x2; x++)
+            {
+                for (int y = y1; y <= y2; y++)
+                {
+                    lights[x][y] += 2;
+                }
+            }
+        }
+    }
+
+    int totalBrightness = 0;
+    for (int x = 0; x < 1000; x++)
+    {
+        for (int y = 0; y < 1000; y++)
+        {
+            totalBrightness += lights[x][y];
+        }
+    }
+
+    fprintf (stdout, "Part 2: The total brightness of all lights is %d\r\n", totalBrightness);
+
     return;
 }
+
