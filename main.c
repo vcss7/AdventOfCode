@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void part1 (FILE *fptr);
-void part2 (FILE *fptr);
+void part1 (const char* line, size_t len);
+void part2 (const char* line, size_t len);
 
 int main (void)
 {
@@ -18,50 +18,36 @@ int main (void)
         exit (1);
     }
 
-    part1 (fptr);
+    // solution for part one here
+    char line[64];
+    size_t len = sizeof(line);
 
-    rewind (fptr);
+    while (fgets(line, len, fptr))
+    {
+        if (ferror (fptr))
+        {
+            fprintf (stderr, "Error occured while reading file\r\n");
+            exit (1);
+        }
 
-    part2 (fptr);
+        fprintf (stdout, "%s", line);
+
+        part1 (line, len);
+        part2 (line, len);
+    }
 
     fclose (fptr);
     return 0;
 }
 
-void part1 (FILE *fptr)
+void part1 (const char* line, size_t len)
 {
     // solution for part one here
-    char ch;
-
-    while ((ch = fgetc (fptr)) != EOF)
-    {
-        if (ferror (fptr))
-        {
-            fprintf (stderr, "Error occured while reading file\r\n");
-            exit (1);
-        }
-
-        fprintf (stdout, "%c", ch);
-    }
-
     return;
 }
 
-void part2 (FILE *fptr)
+void part2 (const char* line, size_t len)
 {
     // solution for part two here
-    char ch;
-
-    while ((ch = fgetc (fptr)) != EOF)
-    {
-        if (ferror (fptr))
-        {
-            fprintf (stderr, "Error occured while reading file\r\n");
-            exit (1);
-        }
-
-        fprintf (stdout, "%c", ch);
-    }
-
     return;
 }
