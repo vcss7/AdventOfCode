@@ -6,8 +6,8 @@ void part2 (const char* line, size_t len);
 
 int main (void)
 {
-    FILE *fptr;
-    char *file_name = "input";
+    FILE* fptr;
+    char* file_name = "input";
 
     fptr = fopen (file_name, "r");
 
@@ -20,9 +20,9 @@ int main (void)
 
     // solution for part one here
     char line[64];
-    size_t len = sizeof(line);
+    size_t len = sizeof (line);
 
-    while (fgets(line, len, fptr))
+    while (fgets (line, len, fptr))
     {
         if (ferror (fptr))
         {

@@ -11,8 +11,8 @@ void initLights ();
 
 int main (void)
 {
-    FILE *fptr;
-    char *file_name = "input";
+    FILE* fptr;
+    char* file_name = "input";
 
     fptr = fopen (file_name, "r");
 
@@ -23,12 +23,12 @@ int main (void)
         exit (1);
     }
 
-    initLights();
+    initLights ();
     part1 (fptr);
 
     rewind (fptr);
 
-    initLights();
+    initLights ();
     part2 (fptr);
 
     fclose (fptr);
@@ -52,9 +52,9 @@ void part1 (FILE* fptr)
 {
     // solution for part one here
     char line[64];
-    size_t len = sizeof(line);
+    size_t len = sizeof (line);
 
-    while (fgets(line, len, fptr))
+    while (fgets (line, len, fptr))
     {
         if (ferror (fptr))
         {
@@ -66,7 +66,8 @@ void part1 (FILE* fptr)
 
         int x1, y1;
         int x2, y2;
-        if (sscanf (line, "turn on %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        if (sscanf (line, "turn on %d,%d through %d,%d\n", &x1, &y1, &x2, &y2)
+            == 4)
         {
             for (int x = x1; x <= x2; x++)
             {
@@ -76,7 +77,9 @@ void part1 (FILE* fptr)
                 }
             }
         }
-        else if (sscanf (line, "turn off %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        else if (sscanf (line, "turn off %d,%d through %d,%d\n", &x1, &y1, &x2,
+                         &y2)
+                 == 4)
         {
             for (int x = x1; x <= x2; x++)
             {
@@ -86,7 +89,9 @@ void part1 (FILE* fptr)
                 }
             }
         }
-        else if (sscanf (line, "toggle %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        else if (sscanf (line, "toggle %d,%d through %d,%d\n", &x1, &y1, &x2,
+                         &y2)
+                 == 4)
         {
             for (int x = x1; x <= x2; x++)
             {
@@ -122,9 +127,9 @@ void part2 (FILE* fptr)
 {
     // solution for part two here
     char line[64];
-    int len = sizeof(line);
+    int len = sizeof (line);
 
-    while (fgets(line, len, fptr))
+    while (fgets (line, len, fptr))
     {
         if (ferror (fptr))
         {
@@ -136,7 +141,8 @@ void part2 (FILE* fptr)
 
         int x1, y1;
         int x2, y2;
-        if (sscanf (line, "turn on %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        if (sscanf (line, "turn on %d,%d through %d,%d\n", &x1, &y1, &x2, &y2)
+            == 4)
         {
             for (int x = x1; x <= x2; x++)
             {
@@ -146,7 +152,9 @@ void part2 (FILE* fptr)
                 }
             }
         }
-        else if (sscanf (line, "turn off %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        else if (sscanf (line, "turn off %d,%d through %d,%d\n", &x1, &y1, &x2,
+                         &y2)
+                 == 4)
         {
             for (int x = x1; x <= x2; x++)
             {
@@ -160,7 +168,9 @@ void part2 (FILE* fptr)
                 }
             }
         }
-        else if (sscanf (line, "toggle %d,%d through %d,%d\n", &x1, &y1, &x2, &y2) == 4)
+        else if (sscanf (line, "toggle %d,%d through %d,%d\n", &x1, &y1, &x2,
+                         &y2)
+                 == 4)
         {
             for (int x = x1; x <= x2; x++)
             {
@@ -181,8 +191,8 @@ void part2 (FILE* fptr)
         }
     }
 
-    fprintf (stdout, "Part 2: The total brightness of all lights is %d\r\n", totalBrightness);
+    fprintf (stdout, "Part 2: The total brightness of all lights is %d\r\n",
+             totalBrightness);
 
     return;
 }
-

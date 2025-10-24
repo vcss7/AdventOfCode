@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void part1 (FILE *fptr);
-void part2 (FILE *fptr);
+void part1 (FILE* fptr);
+void part2 (FILE* fptr);
 
 // part 1 functions
 bool hasVowels (const char* string, const int numVowels);
@@ -15,13 +15,13 @@ bool hasCharPair (const char* string);
 bool hasPairOfCharPairs (const char* string);
 bool hasCharSandwich (const char* string);
 
-const char naughtyStrings[4][3] = { "ab", "cd", "pq", "xy"};
-const char vowels[5] = {'a', 'e', 'i', 'o', 'u'};
+const char naughtyStrings[4][3] = {"ab", "cd", "pq", "xy"};
+const char vowels[5]            = {'a', 'e', 'i', 'o', 'u'};
 
 int main (void)
 {
-    FILE *fptr;
-    char *file_name = "input";
+    FILE* fptr;
+    char* file_name = "input";
 
     fptr = fopen (file_name, "r");
 
@@ -42,7 +42,7 @@ int main (void)
     return 0;
 }
 
-void part1 (FILE *fptr)
+void part1 (FILE* fptr)
 {
     // solution for part one here
     const int LINE_LEN = 17;
@@ -50,7 +50,7 @@ void part1 (FILE *fptr)
 
     int niceStringCount = 0;
 
-    while (fgets(line, sizeof(line), fptr))
+    while (fgets (line, sizeof (line), fptr))
     {
         if (ferror (fptr))
         {
@@ -58,7 +58,8 @@ void part1 (FILE *fptr)
             exit (1);
         }
 
-        if (!hasNaughtyWords (line) && hasVowels (line, 3) && hasCharPair (line))
+        if (!hasNaughtyWords (line) && hasVowels (line, 3)
+            && hasCharPair (line))
         {
             niceStringCount++;
         }
@@ -69,14 +70,14 @@ void part1 (FILE *fptr)
     return;
 }
 
-void part2 (FILE *fptr)
+void part2 (FILE* fptr)
 {
     // solution for part two here
     const int LINE_LEN = 17;
     char line[LINE_LEN];
 
     int niceStringCount = 0;
-    while (fgets(line, sizeof (line), fptr))
+    while (fgets (line, sizeof (line), fptr))
     {
         if (ferror (fptr))
         {
@@ -89,7 +90,7 @@ void part2 (FILE *fptr)
             continue;
         }
 
-        if (hasPairOfCharPairs(line) && hasCharSandwich(line))
+        if (hasPairOfCharPairs (line) && hasCharSandwich (line))
         {
             niceStringCount++;
         }
@@ -102,7 +103,7 @@ void part2 (FILE *fptr)
 
 bool hasVowels (const char* string, const int numVowels)
 {
-    int len = strlen (string);
+    int len        = strlen (string);
     int vowelCount = 0;
     for (int i = 0; i < len; i++)
     {
@@ -112,11 +113,8 @@ bool hasVowels (const char* string, const int numVowels)
             case 'e':
             case 'i':
             case 'o':
-            case 'u':
-                vowelCount++;
-                break;
-            default:
-                break;
+            case 'u': vowelCount++; break;
+            default: break;
         }
     }
 
@@ -131,7 +129,7 @@ bool hasNaughtyWords (const char* string)
     bool hasNaughtyWord = false;
     for (int i = 0; i < numNaughtyWords; i++)
     {
-        if (strstr(string, naughtyStrings[i]))
+        if (strstr (string, naughtyStrings[i]))
         {
             return true;
         }
