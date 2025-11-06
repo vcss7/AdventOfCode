@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-uint16_t wireState[26][26];
+uint16_t wireState[0xFF][0xFF] = { {0, 0}, {0, 0} };
 
 // gate, another wire, or value provide signals to wires
 // one signal source per wire
@@ -14,7 +14,7 @@ uint16_t wireState[26][26];
 void part1 (const char* line, size_t len);
 void part2 (const char* line, size_t len);
 
-bool valueFromInstruction(const char* instruction, uint16_t* value);
+int negateVal (int val);
 
 int main (int argc, char** argv)
 {
@@ -83,9 +83,11 @@ void part1 (const char* line, size_t len)
     }
 
     int val = 0;
-    char in1[3];
-    char op[6];
-    char in2[3];
+    char in1[3] = { '\0' };
+    char op[6] = { '\0' };
+    char in2[3] = { '\0' };
+
+    const char* numSet = "0123456789";
 
     if (strstr(inst, "NOT"))
     {
@@ -95,6 +97,18 @@ void part1 (const char* line, size_t len)
             exit (3);
         }
         fprintf (stdout, "Assigning NOT %s to wire %s\r\n", in1, out);
+        
+        if (strspn (in1, numSet) == strlen(in1))
+        {
+            val = negateVal(atoi(in1));
+        }
+        else
+        {
+            val = negateVal(wireState[in1[0]][in1[1]]);
+        }
+
+        fprintf (stdout, "Writing %i to wire %i, %i\r\n", val, out[0], out[1]);
+        wireState[out[0]][out[1]] = val;
     }
     else if (strstr(inst, "OR"))
     {
@@ -103,7 +117,7 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from OR operation\r\n");
             exit (3);
         }
-        fprintf (stdout, "Assigning %s OR %s to wire %s\r\n", in1, in2, out);
+        // fprintf (stdout, "Assigning %s OR %s to wire %s\r\n", in1, in2, out);
     }
     else if (strstr(inst, "AND"))
     {
@@ -112,7 +126,7 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from AND operation\r\n");
             exit (3);
         }
-        fprintf (stdout, "Assigning %s AND %s to wire %s\r\n", in1, in2, out);
+        // fprintf (stdout, "Assigning %s AND %s to wire %s\r\n", in1, in2, out);
     }
     else if (strstr(inst, "LSHIFT"))
     {
@@ -121,7 +135,7 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from LSHIFT operation\r\n");
             exit (3);
         }
-        fprintf (stdout, "Assigning %s LSHIFT %s to wire %s\r\n", in1, in2, out);
+        // fprintf (stdout, "Assigning %s LSHIFT %s to wire %s\r\n", in1, in2, out);
     }
     else if (strstr(inst, "RSHIFT"))
     {
@@ -130,16 +144,13 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from RSHIFT operation\r\n");
             exit (3);
         }
-        fprintf (stdout, "Assigning %s RSHIFT %s to wire %s\r\n", in1, in2, out);
-    }
-    else if ((val = atoi(inst)))
-    {
-        fprintf (stdout, "Assinging value %d to wire %s\r\n", val, out);
+        // fprintf (stdout, "Assigning %s RSHIFT %s to wire %s\r\n", in1, in2, out);
     }
     else
     {
-        fprintf (stderr, "Unable to identify instruction\r\n");
-        exit (3);
+        val = atoi(inst);
+        wireState[out[0]][out[1]] = val;
+        fprintf (stdout, "Assinging value %i to wire %i, %i\r\n", val, out[0], out[1]);
     }
     
     return;
@@ -151,9 +162,7 @@ void part2 (const char* line, size_t len)
     return;
 }
 
-bool valueFromInstruction(const char* instruction, uint16_t* value)
+int negateVal (int val)
 {
-
-
-    return false;
+    return ~val + 1;
 }
