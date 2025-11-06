@@ -4,10 +4,16 @@
 void part1 (const char* line, size_t len);
 void part2 (const char* line, size_t len);
 
-int main (void)
+int main (int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        fprintf (stdout, "Please provide an input file\r\n");
+        exit (1);
+    }
+
     FILE* fptr;
-    char* file_name = "input";
+    char* file_name = argv[1]; 
 
     fptr = fopen (file_name, "r");
 
