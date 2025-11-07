@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -14,7 +15,9 @@ uint16_t wireState[0xFF][0xFF] = { {0, 0}, {0, 0} };
 void part1 (const char* line, size_t len);
 void part2 (const char* line, size_t len);
 
+bool isWirePort (const char* str);
 int negateVal (int val);
+void printWireStates ();
 
 int main (int argc, char** argv)
 {
@@ -66,6 +69,8 @@ int main (int argc, char** argv)
         part2 (line, len);
     }
 
+    // printWireStates ();
+
     fclose (fptr);
     return 0;
 }
@@ -96,19 +101,7 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from NOT operation\r\n");
             exit (3);
         }
-        fprintf (stdout, "Assigning NOT %s to wire %s\r\n", in1, out);
-        
-        if (strspn (in1, numSet) == strlen(in1))
-        {
-            val = negateVal(atoi(in1));
-        }
-        else
-        {
-            val = negateVal(wireState[in1[0]][in1[1]]);
-        }
-
-        fprintf (stdout, "Writing %i to wire %i, %i\r\n", val, out[0], out[1]);
-        wireState[out[0]][out[1]] = val;
+        val = negateVal (isWirePort (in1) ? wireState[in1[0]][in1[1]] : atoi (in1));
     }
     else if (strstr(inst, "OR"))
     {
@@ -117,7 +110,8 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from OR operation\r\n");
             exit (3);
         }
-        // fprintf (stdout, "Assigning %s OR %s to wire %s\r\n", in1, in2, out);
+        val = isWirePort (in1) ? wireState[in1[0]][in1[1]] : atoi (in1);
+        val |= isWirePort (in2) ? wireState[in2[0]][in2[1]] : atoi (in2);
     }
     else if (strstr(inst, "AND"))
     {
@@ -126,7 +120,8 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from AND operation\r\n");
             exit (3);
         }
-        // fprintf (stdout, "Assigning %s AND %s to wire %s\r\n", in1, in2, out);
+        val = isWirePort (in1) ? wireState[in1[0]][in1[1]] : atoi (in1);
+        val &= isWirePort (in2) ? wireState[in2[0]][in2[1]] : atoi (in2);
     }
     else if (strstr(inst, "LSHIFT"))
     {
@@ -135,7 +130,8 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from LSHIFT operation\r\n");
             exit (3);
         }
-        // fprintf (stdout, "Assigning %s LSHIFT %s to wire %s\r\n", in1, in2, out);
+        val = isWirePort (in1) ? wireState[in1[0]][in1[1]] : atoi (in1);
+        val <<= atoi (in2);
     }
     else if (strstr(inst, "RSHIFT"))
     {
@@ -144,14 +140,16 @@ void part1 (const char* line, size_t len)
             fprintf(stderr, "Failed to extract wire in from RSHIFT operation\r\n");
             exit (3);
         }
-        // fprintf (stdout, "Assigning %s RSHIFT %s to wire %s\r\n", in1, in2, out);
+        val = isWirePort (in1) ? wireState[in1[0]][in1[1]] : atoi (in1);
+        val >>= atoi (in2);
     }
     else
     {
         val = atoi(inst);
-        wireState[out[0]][out[1]] = val;
-        fprintf (stdout, "Assinging value %i to wire %i, %i\r\n", val, out[0], out[1]);
     }
+
+    wireState[out[0]][out[1]] = val;
+    fprintf (stdout, "\tWriting %i to wire %i, %i\r\n", val, out[0], out[1]);
     
     return;
 }
@@ -164,5 +162,26 @@ void part2 (const char* line, size_t len)
 
 int negateVal (int val)
 {
-    return ~val + 1;
+    return ~val;
+}
+
+bool isWirePort (const char* str)
+{
+    const char* numSet = "1234567890";
+    return strspn(str, numSet) != strlen(str);
+}
+
+void printWireStates ()
+{
+    fprintf (stdout, "Wire States\r\n");
+    for (int i = 0; i < 0xFF; i++)
+    {
+        for (int j = 0; j < 0xFF; j++)
+        {
+            if (wireState[i][j] != 0)
+            {
+                fprintf (stdout, "%c%c: %i\r\n", i, j, wireState[i][j]);
+            }
+        }
+    }
 }
